@@ -1,0 +1,40 @@
+{
+    "name": "novius/laravel-media-toolbox",
+    "description": "This packages helps you optimize pictures on-the-fly",
+    "keywords": [
+        "Novius",
+        "Laravel",
+        "image",
+        "picture",
+        "optimize",
+        "frontend"
+    ],
+    "type": "library",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Novius Agency",
+            "email": "team-developpeurs@novius.com",
+            "homepage": "http://novius.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-gd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Novius\\MediaToolbox\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Novius\\MediaToolbox\\MediaToolboxServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
