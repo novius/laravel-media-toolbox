@@ -15,7 +15,7 @@ Then add this to `config/app.php`:
 
 ```php
 // in 'providers' => [ ... ]
-Novius\MediaToolbox\MediaToolboxServiceProvider::class,
+\Novius\MediaToolbox\MediaToolboxServiceProvider::class,
 
 // in 'aliases' => [ ... ]
 'Medt' => Novius\MediaToolbox\Support\MediaToolbox::class,
@@ -39,7 +39,7 @@ In a view:
 
 <!-- This will output a jpg with 75% quality.
      Lower number makes smaller files. Minimum is 1, max is 100 -->
-<img src="{{ Medt::asset('images/something.gif')->compress(75) }}">
+<img src="{{ Medt::asset('images/something.gif')->quality(75) }}">
 ```
 
 ## Configure
