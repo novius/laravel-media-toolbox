@@ -10,7 +10,7 @@ class ImageOptimizer implements OptimizerInterface
 
     protected static $methods = [
         'image/jpeg' => [
-            'create' => 'imagecreatefromjpg',
+            'create' => 'imagecreatefromjpeg',
             'output' => 'imagejpeg',
         ],
         'image/gif' => [
