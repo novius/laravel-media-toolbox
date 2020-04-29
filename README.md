@@ -5,6 +5,10 @@
 
 Optimize your pictures on-the-fly! 🛫
 
+## Requirements
+
+Laravel >= 6.0
+
 ## Installation
 
 ```sh
@@ -14,9 +18,6 @@ composer require novius/laravel-media-toolbox
 Then add this to `config/app.php`:
 
 ```php
-// in 'providers' => [ ... ]
-Novius\MediaToolbox\MediaToolboxServiceProvider::class,
-
 // in 'aliases' => [ ... ]
 'Medt' => Novius\MediaToolbox\Support\MediaToolbox::class,
 ```
@@ -39,7 +40,17 @@ In a view:
 
 <!-- This will output a jpg with 75% quality.
      Lower number makes smaller files. Minimum is 1, max is 100 -->
-<img src="{{ Medt::asset('images/something.gif')->compress(75) }}">
+<img src="{{ Medt::asset('images/something.gif')->quality(75) }}">
+```
+
+**SEO Friendly**
+
+You can specify a name for your filename (value will be convert to slug) :
+
+Usage in a view:
+
+```html
+<img src="{{ Medt::asset('images/hello.png')->quality(90)->name('my image') }}">
 ```
 
 ## Configure
@@ -50,32 +61,36 @@ Publish the config file:
 php artisan vendor:publish --provider="Novius\MediaToolbox\MediaToolboxServiceProvider"
 ```
 
-Edit `config/mediatoolbox.php`. Here is an example of possible settings:
-
-```php
-<?php
-
-return [
-    // Fallback in case of file not found or format not supported
-    'placeholder' => 'image/placeholder.png',
-
-    // Default image fitting ; can be 'cover' or 'stretch'
-    'fit' => 'cover',
-
-    // Where to store pictures. Your stores are defined in config/cache.php
-    'cache' => 'file',
-
-    // How much time, in minutes, do generated pictures last?
-    'expire' => 60 * 8,
-];
-```
-
-Don’t worry too much about cache expiration: last modification dates are taken
-in account by the engine so you won’t have to clear the cache after editing a
-picture.
+Edit `config/mediatoolbox.php`.
 
 ## Clearing the cache manually
 
 ```sh
 php artisan cache:clear
 ```
+
+## Purge expired medias
+
+In your app/Console/Kernel.php file, you should register a daily job to purge expired medias :
+
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('media-toolbox:purge-expired')
+        ->daily();
+}
+
+By default, media is stale considered after 1 week. You can override this value in configuration file with `expire key.
+
+## Lint
+
+Run php-cs with:
+
+```sh
+composer run-script lint
+```
+
+## Contributing
+
+Contributions are welcome!
+Leave an issue on Github, or create a Pull Request.
+

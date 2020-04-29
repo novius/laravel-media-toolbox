@@ -4,34 +4,47 @@ namespace Novius\MediaToolbox\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 use Novius\MediaToolbox\Support\Media;
 use Novius\MediaToolbox\Support\Query;
 
 class MediaToolboxController extends Controller
 {
-    public function getPicture(Request $request)
+    public function getPicture(Request $request, string $picture)
     {
-        $placeholder = config('mediatoolbox.placeholder');
+        $cache = Cache::store(config('imagetoolbox.cache', 'file'));
+        $cacheHashKey = $cache->get('medias-'.$picture);
+        $pictureInfos = $cache->get($cacheHashKey);
 
-        if ($result = $this->stream($request->all())) {
+        if (empty($pictureInfos['query']['o'])) {
+            abort(404);
+        }
+
+        $query = new Query($pictureInfos['query']);
+
+        try {
+            $media = new Media($query);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        $media->persists($picture);
+
+        if ($result = $this->stream($media)) {
             return $result;
         }
-        if ($result = $this->stream(['o' => $placeholder] + $request->all())) {
-            return $result;
-        }
 
-        return redirect($placeholder);
+        abort(404);
     }
 
-    private function stream($parameters)
+    protected function stream(Media $media)
     {
         try {
-            $query = new Query($parameters);
-            $media = new Media($query);
-
             return $media->stream();
         } catch (\Exception $e) {
-            return null;
+            report($e);
         }
+
+        return null;
     }
 }

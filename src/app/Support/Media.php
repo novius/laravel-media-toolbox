@@ -2,22 +2,21 @@
 
 namespace Novius\MediaToolbox\Support;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class Media
 {
     public $query;
     public $optimizer;
+    public $path;
     public $mimetype;
 
     public function __construct(Query $query)
     {
         $this->query = $query;
         $this->optimizer = new ImageOptimizer;
-        $this->optimizer->loadFromFile(
-            file_exists($trimmed = ltrim($this->query->o, '/')) ?
-            $trimmed : $this->query->o
-        );
+        $trimmed = ltrim($this->query->o, '/');
+        $this->optimizer->loadFromFile((file_exists($trimmed) ? $trimmed : $this->query->o));
     }
 
     public function process()
@@ -45,6 +44,15 @@ class Media
         }
     }
 
+    public function persists(string $filename): bool
+    {
+        $this->process();
+        $content = $this->optimizer->getOptimizedContent();
+
+        return Storage::disk(config('mediatoolbox.disk', 'public'))
+            ->put(config('mediatoolbox.medias_dirname').DIRECTORY_SEPARATOR.$filename, $content);
+    }
+
     public function stream()
     {
         return response(
@@ -54,39 +62,12 @@ class Media
         );
     }
 
-    public function getRawContent()
+    protected function getRawContent(): string
     {
-        $key = 'mediatoolbox-'.$this->buildHash();
-
-        $cache = Cache::store(config('imagetoolbox.cache', 'file'));
-
-        if ($cache->has($key)) {
-            // Retreive picture from cache
-            $content = $cache->get($key);
-            $this->mimetype = getimagesizefromstring($content)['mime'];
-
-            return $content;
-        }
-
         $this->process();
         $content = $this->optimizer->getOptimizedContent();
         $this->mimetype = $this->optimizer->mimetype;
 
-        // Store generated picture in cache
-        $cache->put(
-            $key,
-            $content,
-            now()->addMinutes(config('imagetoolbox.expire', 10))
-        );
-
         return $content;
-    }
-
-    public function buildHash()
-    {
-        $time = file_exists($trimmed = ltrim($this->query->o, '/')) ?
-            filemtime(public_path($trimmed)) : null;
-
-        return md5($time.$this->query);
     }
 }

@@ -15,12 +15,16 @@
         {
             "name": "Novius Agency",
             "email": "team-developpeurs@novius.com",
-            "homepage": "http://novius.com"
+            "homepage": "https://www.novius.com"
         }
     ],
     "require": {
-        "php": ">=7.1",
-        "ext-gd": "*"
+        "php": ">=7.2",
+        "ext-gd": "*",
+        "laravel/framework": "~6.0|~7.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "~2.15.0"
     },
     "autoload": {
         "psr-4": {
@@ -36,5 +40,10 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "lint": [
+            "php-cs-fixer fix --config .php_cs -vv --diff --allow-risky=yes --dry-run"
+        ]
     }
 }

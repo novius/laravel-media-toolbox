@@ -1,15 +1,19 @@
 <?php
 
 return [
-    // Fallback in case of file not found or format not supported
-    'placeholder' => '/images/placeholder.png',
-
     // Default image fitting ; can be 'cover' or 'stretch'
     'fit' => 'cover',
 
-    // Where to store pictures. Your stores are defined in config/cache.php
-    'cache' => 'file',
+    // How much time, in seconds, do generated pictures ?
+    'expire' => 3600 * 24 * 7,
 
-    // How much time, in minutes, do generated pictures last?
-    'expire' => 60 * 8,
+    'disk' => 'public',
+
+    'medias_dirname' => 'medias',
+
+    // Which middleware use with media route
+    'middleware' => [
+        'web',
+        'cache.headers:public;max_age=604800;etag',
+    ],
 ];
