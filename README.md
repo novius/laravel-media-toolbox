@@ -45,7 +45,7 @@ In a view:
 
 **SEO Friendly**
 
-You can specify a name for your filename (value will be convert to slug) :
+You can specify a name for your filename (value will be converted to slug) :
 
 Usage in a view:
 
