@@ -12,7 +12,7 @@ class MediaToolboxController extends Controller
 {
     public function getPicture(Request $request, string $picture)
     {
-        $cacheHashKey = Cache::get('medias-'.$picture, '');
+        $cacheHashKey = Cache::get('mediatoolbox.media.'.$picture, '');
         if (empty($cacheHashKey)) {
             abort(404);
         }

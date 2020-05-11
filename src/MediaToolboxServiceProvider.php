@@ -7,7 +7,6 @@ use Novius\MediaToolbox\Console\Commands\PurgeExpiredMedias;
 
 class MediaToolboxServiceProvider extends ServiceProvider
 {
-    const PACKAGE_NAME = 'laravel-mediatoolbox';
     /**
      * Perform post-registration booting of services.
      *
@@ -32,12 +31,12 @@ class MediaToolboxServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/config/mediatoolbox.php',
+            __DIR__.'/../config/mediatoolbox.php',
             'mediatoolbox'
         );
 
         $this->loadRoutesFrom(
-            __DIR__.'/routes/mediatoolbox.php'
+            __DIR__.'/../routes/mediatoolbox.php'
         );
     }
 }

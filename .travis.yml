@@ -2,6 +2,8 @@ language: php
 
 php:
   - 7.2
+  - 7.3
+  - 7.4
 
 sudo: false
 
@@ -15,3 +17,4 @@ before_script:
 
 script:
   - composer run-script lint
+  - composer run-script test

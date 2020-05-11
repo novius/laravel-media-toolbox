@@ -22,13 +22,13 @@ class QueryBuilder implements Htmlable
 
     public function __toString()
     {
-        $pictureInfos = Cache::remember($this->query->hash(), config('mediatoolbox.expire'), function () {
+        $pictureInfos = Cache::remember($this->cacheKey(), config('mediatoolbox.expire'), function () {
             $filename = uniqid($this->query->filename().'-');
             if (!empty($this->query->extension())) {
                 $filename .= '.'.$this->query->extension();
             }
 
-            Cache::put('medias-'.$filename, $this->query->hash(), config('mediatoolbox.expire'));
+            Cache::put('mediatoolbox.media.'.$filename, $this->cacheKey(), config('mediatoolbox.expire'));
 
             return [
                 'filename' => $filename,
@@ -111,5 +111,15 @@ class QueryBuilder implements Htmlable
         $this->query->n = Str::slug($name);
 
         return $this;
+    }
+
+    public function cacheKey():string
+    {
+        $queryHash = $this->query->hash();
+        if (!is_string($queryHash)) {
+            throw new \InvalidArgumentException();
+        }
+
+        return 'mediatoolbox.query.'.$queryHash;
     }
 }
