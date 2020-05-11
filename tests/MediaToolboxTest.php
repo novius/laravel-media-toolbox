@@ -10,8 +10,8 @@ class MediaToolboxTest extends TestCase
 {
     public function test_invalid_call()
     {
-        $this->expectExceptionObject(new \InvalidArgumentException());
-        MediaToolbox::toHtml();
+        $queryBuilder = MediaToolbox::asset('');
+        $this->assertEquals('mediatoolbox.query.invalid', $queryBuilder->cacheKey());
     }
 
     public function test_not_found_media()

@@ -117,7 +117,7 @@ class QueryBuilder implements Htmlable
     {
         $queryHash = $this->query->hash();
         if (!is_string($queryHash)) {
-            throw new \InvalidArgumentException();
+            $queryHash = 'invalid';
         }
 
         return 'mediatoolbox.query.'.$queryHash;
