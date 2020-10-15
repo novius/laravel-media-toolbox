@@ -73,11 +73,13 @@ php artisan cache:clear
 
 In your app/Console/Kernel.php file, you should register a daily job to purge expired medias :
 
+```
 protected function schedule(Schedule $schedule)
 {
     $schedule->command('media-toolbox:purge-expired')
         ->daily();
 }
+```
 
 By default, media is stale considered after 1 week. You can override this value in configuration file with `expire key.
 
