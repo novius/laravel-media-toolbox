@@ -15,6 +15,13 @@ Laravel >= 6.0
 composer require novius/laravel-media-toolbox
 ```
 
+Then, you must publish and run the migrations to create the language_lines table:
+
+```sh
+php artisan vendor:publish --provider="Novius\MediaToolbox\MediaToolboxServiceProvider" --tag="migrations"
+php artisan migrate
+```
+
 Then add this to `config/app.php`:
 
 ```php
