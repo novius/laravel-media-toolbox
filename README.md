@@ -7,7 +7,10 @@ Optimize your pictures on-the-fly! 🛫
 
 ## Requirements
 
-Laravel >= 6.0
+Laravel >= 8.0
+
+> **NOTE**: These instructions are for Laravel >= 8.0. If you are using prior version, please
+> see the [previous version's docs](https://github.com/novius/laravel-media-toolbox/tree/1.0).
 
 ## Installation
 
