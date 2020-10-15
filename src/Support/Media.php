@@ -2,7 +2,9 @@
 
 namespace Novius\MediaToolbox\Support;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Novius\MediaToolbox\Models\MediaHistory;
 
 class Media
 {
@@ -48,9 +50,21 @@ class Media
     {
         $this->process();
         $content = $this->optimizer->getOptimizedContent();
+        $this->path = config('mediatoolbox.medias_dirname').DIRECTORY_SEPARATOR.$filename;
 
         return Storage::disk(config('mediatoolbox.disk', 'public'))
-            ->put(config('mediatoolbox.medias_dirname').DIRECTORY_SEPARATOR.$filename, $content);
+            ->put($this->path, $content);
+    }
+
+    public function saveHistory(Request $request, Query $query, string $picture)
+    {
+        $history = new MediaHistory();
+        $history->picture = $picture;
+        $history->path = $this->path;
+        $history->url = $request->fullUrl();
+        $history->query_md5 = md5((string) $query);
+
+        return $history->save();
     }
 
     public function stream()

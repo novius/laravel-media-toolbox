@@ -16,6 +16,12 @@ class MediaToolboxServiceProvider extends ServiceProvider
     {
         $this->publishes([__DIR__.'/../config' => config_path()], 'config');
 
+        if (!class_exists('CreateMediaToolboxMediasHistory')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_media_toolbox_medias_history.php.stub' => database_path('migrations/2020_10_15_101533_create_media_toolbox_medias_history.php'),
+            ], 'migrations');
+        }
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PurgeExpiredMedias::class,

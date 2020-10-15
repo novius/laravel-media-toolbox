@@ -2,6 +2,7 @@
 
 namespace Novius\MediaToolbox\Test;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Novius\MediaToolbox\MediaToolboxServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
@@ -18,6 +19,12 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        Artisan::call('migrate');
+
+        include_once __DIR__.'/../database/migrations/create_media_toolbox_medias_history.php.stub';
+
+        (new \CreateMediaToolboxMediasHistory())->up();
+
         $this->setUpAssets();
     }
 
@@ -27,6 +34,12 @@ abstract class TestCase extends OrchestraTestCase
         $aliases['Medt'] = \Novius\MediaToolbox\Support\MediaToolbox::class;
 
         $app['config']->set('app.aliases', $aliases);
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
     }
 
     protected function getPackageProviders($app)
