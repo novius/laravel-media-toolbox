@@ -14,7 +14,7 @@ class MediaToolboxServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__.'/config' => config_path()], 'config');
+        $this->publishes([__DIR__.'/../config' => config_path()], 'config');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
