@@ -3,6 +3,8 @@
 namespace Novius\MediaToolbox\Support;
 
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class QueryBuilder implements Htmlable
 {
@@ -20,7 +22,23 @@ class QueryBuilder implements Htmlable
 
     public function __toString()
     {
-        return route('mediatoolbox.query', $this->query);
+        $pictureInfos = Cache::remember($this->cacheKey(), config('mediatoolbox.expire'), function () {
+            $filename = uniqid($this->query->filename().'-');
+            if (!empty($this->query->extension())) {
+                $filename .= '.'.$this->query->extension();
+            }
+
+            Cache::put('mediatoolbox.media.'.$filename, $this->cacheKey(), config('mediatoolbox.expire'));
+
+            return [
+                'filename' => $filename,
+                'query' => (array) $this->query,
+            ];
+        });
+
+        return route('mediatoolbox.query', [
+            'query' => $pictureInfos['filename'],
+        ]);
     }
 
     public static function __callStatic($name, $arguments)
@@ -28,14 +46,14 @@ class QueryBuilder implements Htmlable
         return call_user_func_array([new self, $name], $arguments);
     }
 
-    public function asset($src)
+    public function asset(string $src)
     {
         $this->query->o = $src;
 
         return $this;
     }
-    
-    public function quality($percent)
+
+    public function quality(int $percent)
     {
         if ($percent) {
             $this->query->c = $percent;
@@ -51,10 +69,10 @@ class QueryBuilder implements Htmlable
         }
         list($width, $height) = $size + [null, null];
 
-        return $this->width($width)->height($height);
+        return $this->width((int) $width)->height((int) $height);
     }
 
-    public function width($size)
+    public function width(int $size)
     {
         if ($size) {
             $this->query->w = $size;
@@ -63,7 +81,7 @@ class QueryBuilder implements Htmlable
         return $this;
     }
 
-    public function height($size)
+    public function height(int $size)
     {
         if ($size) {
             $this->query->h = $size;
@@ -78,13 +96,30 @@ class QueryBuilder implements Htmlable
             list($x, $y) = func_get_args();
             $ratio = $x / $y;
         }
-        
+
         if ($this->query->w) {
             $this->query->h = $this->query->w / $ratio;
-        }elseif ($this->query->h) {
+        } elseif ($this->query->h) {
             $this->query->w = $this->query->h * $ratio;
         }
 
         return $this;
+    }
+
+    public function name(string $name)
+    {
+        $this->query->n = Str::slug($name);
+
+        return $this;
+    }
+
+    public function cacheKey():string
+    {
+        $queryHash = $this->query->hash();
+        if (!is_string($queryHash)) {
+            $queryHash = 'invalid';
+        }
+
+        return 'mediatoolbox.query.'.$queryHash;
     }
 }

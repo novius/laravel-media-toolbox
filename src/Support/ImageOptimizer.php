@@ -10,7 +10,7 @@ class ImageOptimizer implements OptimizerInterface
 
     protected static $methods = [
         'image/jpeg' => [
-            'create' => 'imagecreatefromjpg',
+            'create' => 'imagecreatefromjpeg',
             'output' => 'imagejpeg',
         ],
         'image/gif' => [
@@ -44,10 +44,8 @@ class ImageOptimizer implements OptimizerInterface
             $stream = fopen('php://memory', 'w+');
 
             $this->compression ?
-                self::$methods[$this->mimetype]['output']
-                    ($this->image, $stream, $this->compression) :
-                self::$methods[$this->mimetype]['output']
-                    ($this->image, $stream);
+                self::$methods[$this->mimetype]['output']($this->image, $stream, $this->compression) :
+                self::$methods[$this->mimetype]['output']($this->image, $stream);
             rewind($stream);
             $contents = stream_get_contents($stream);
             fclose($stream);
@@ -85,8 +83,8 @@ class ImageOptimizer implements OptimizerInterface
 
     public function scale($scale)
     {
-        $width = $this->getWidth() * $scale/100;
-        $height = $this->getheight() * $scale/100;
+        $width = $this->getWidth() * $scale / 100;
+        $height = $this->getheight() * $scale / 100;
         $this->resize($width, $height, 'stretch');
     }
 
