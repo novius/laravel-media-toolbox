@@ -9,6 +9,8 @@ return [
 
     'disk' => 'public',
 
+    'prefix' => '',
+
     'medias_dirname' => 'medias',
 
     // Which middleware use with media route
