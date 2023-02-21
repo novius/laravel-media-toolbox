@@ -21,7 +21,7 @@
     "require": {
         "php": ">=7.3",
         "ext-gd": "*",
-        "laravel/framework": "^8.0"
+        "laravel/framework": "~8.0|~9.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "~2.16.4",
